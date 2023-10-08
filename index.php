@@ -28,40 +28,50 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
 </head>
 <body>
-
-    <?php include 'navbar.php'; 
+    <?php 
+    require_once('DatabaseService.php');
+    include 'navbar.php'; 
     session_start();
     echo $_SESSION["userID"];
     echo $_SESSION['username'];
     if(!isset($_SESSION["open_document_name"])) { // unset this every time you open a page other than editor page
         $_SESSION["open_document_name"] = "New Document";
     }
+    $db = new DatabaseService("localhost", "root", "", "wordprocessordb");       
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if($_POST["submit"] == 'save') {         
-            $servername = "localhost";
-            $user = "root";
-            $pass= "";
-            $db = "wordprocessordb";
-                    
-            // Create connection
-            $conn = new mysqli($servername, $user, $pass, $db);
-            // Check connection
-            if ($conn->connect_error) {
-                die("Connection failed: " . $conn->connect_error);
-            }
-            $serializedDelta = mysqli_real_escape_string($conn, $_POST['editor_contents']); // escape the JSON data
+        if($_POST["submit"] == 'save') {  
+            $serializedDelta = $_POST['editor_contents'];
             $currentUserId = $_SESSION['userID'];
             $currentTime = date('Y-m-d H:i:s'); // has to match DATETIME data type format in MySQL
             $title = "Example"; // change this
-            $stmt = $conn->prepare("INSERT INTO document (title, delta, user_id, last_saved) VALUES (?, ?, ?, ?)");
-            $stmt->bind_param("ssis", $title, $serializedDelta, $currentUserId, $currentTime);
-            $stmt->execute();
+            $db->executeQuery("INSERT INTO document (title, delta, user_id, last_saved) VALUES (?, ?, ?, ?)", 
+                [$title, $serializedDelta, $currentUserId, $currentTime], "ssis", "insert");
+            
+
+            // $servername = "localhost";
+            // $user = "root";
+            // $pass= "";
+            // $db = "wordprocessordb";
+                    
+            // // Create connection
+            // $conn = new mysqli($servername, $user, $pass, $db);
+            // // Check connection
+            // if ($conn->connect_error) {
+            //     die("Connection failed: " . $conn->connect_error);
+            // }
+            // $serializedDelta = mysqli_real_escape_string($conn, $_POST['editor_contents']); // escape the JSON data
+            // $currentUserId = $_SESSION['userID'];
+            // $currentTime = date('Y-m-d H:i:s'); // has to match DATETIME data type format in MySQL
+            // $title = "Example"; // change this
+            // $stmt = $conn->prepare("INSERT INTO document (title, delta, user_id, last_saved) VALUES (?, ?, ?, ?)");
+            // $stmt->bind_param("ssis", $title, $serializedDelta, $currentUserId, $currentTime);
+            // $stmt->execute();
     
-            $conn->close();
+            // $conn->close();
         }
         
     }
-           
+    $db->closeConnection();
     ?>
     <div class="container">
     <h1>Editing "<?php echo $_SESSION["open_document_name"];?>"</h1>
@@ -71,7 +81,7 @@
         <button type="submit" value="save" name="submit" class="btn btn-default">Save Document</button>
     </form>
     <!-- Load document with id 1 -->
-    <button value="load" name="load" class="btn btn-default" onclick="Load(18)">Load Document</button>
+    <button value="load" name="load" class="btn btn-default" onclick="Load(27)">Load Document</button>
     </div>
 
     <script>

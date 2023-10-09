@@ -5,7 +5,7 @@ class Document {
     private string $title;
     private string $delta;
     private int $user_id;
-    private DateTime $last_saved;
+    private string $last_saved;
 
 
     public function getId(): int {
@@ -32,10 +32,10 @@ class Document {
     public function setUserId(int $user_id) {
         $this->user_id = $user_id;
     }
-	public function getLast_Saved(): DateTime {
+	public function getLast_Saved(): string {
 		return $this->last_saved;
 	}
-	public function setLast_Saved(DateTime $last_saved): void {
+	public function setLast_Saved(string $last_saved): void {
 		$this->last_saved = $last_saved;
 	}
 }

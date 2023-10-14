@@ -9,12 +9,12 @@ interface DocumentServiceInterface {
     public function updateDocumentContents(int $documentId, string $newDelta): string;
 
     public function getDocumentTitleFromId(int $documentId): string;
-    
+
     // public function getFriendsDocuments(int $userId, array $friendsList): array;
 
     // public function getPublicDocuments(): array;
 
-    // public function getMyDocuments(int $userId): array;
+    // public function getMyDocuments(string $username): array;
 
     // public function convertToPDF(Document $doc): void;
 }

@@ -19,11 +19,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt->store_result();
     if ($stmt->num_rows == 1) {
         session_start();
-        $_SESSION['username'] = $username;
         $user_id = null;
         $stmt->bind_result($user_id, $username, $password);
         if($stmt->fetch()) {
             $_SESSION['userID'] = $user_id;
+            $_SESSION['username'] = $username;
         }
         
         header('Location: index.php');

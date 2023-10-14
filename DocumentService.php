@@ -28,7 +28,7 @@ class DocumentService implements DocumentServiceInterface {
             $doc->setId($row['id']);
             $doc->setTitle($row['title']);
             $doc->setDelta($row['delta']);
-            $doc->setUserId($row['user_id']);
+            $doc->setAuthor($row['author']);
             $doc->setLast_Saved($row['last_saved']);
             return $doc;
         }
@@ -38,9 +38,9 @@ class DocumentService implements DocumentServiceInterface {
     }
 
     public function addDocument(Document $doc): string {
-        $sql = "INSERT INTO document (title, delta, user_id, last_saved) VALUES (?, ?, ?, ?)";
+        $sql = "INSERT INTO document (title, delta, author, last_saved) VALUES (?, ?, ?, ?)";
         $result = $this->databaseService->executeQuery($sql, 
-                [$doc->getTitle(), $doc->getDelta(), $doc->getUserId(), $doc->getLast_Saved()], "ssis", "insert");
+                [$doc->getTitle(), $doc->getDelta(), $doc->getAuthor(), $doc->getLast_Saved()], "ssss", "insert");
         if($result) {
             return "Document saved.";
         }

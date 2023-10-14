@@ -44,7 +44,7 @@
             $_SESSION["editor_menu_button_clicked"] = true;
             $doc = new Document();
             $doc->setTitle($_POST['documentTitle']);
-            $doc->setUserId($_SESSION['userID']);
+            $doc->setAuthor($_SESSION['username']);
             $doc->setLast_Saved(date('Y-m-d H:i:s'));
             $doc->setDelta($_POST['editor_contents']);
             $docService->addDocument($doc);

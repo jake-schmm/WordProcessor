@@ -4,7 +4,7 @@ class Document {
     private int $id;
     private string $title;
     private string $delta;
-    private int $user_id;
+    private string $author;
     private string $last_saved;
 
 
@@ -26,11 +26,11 @@ class Document {
     public function setDelta(string $delta) {
         $this->delta = $delta;
     }
-    public function getUserId(): int {
-        return $this->user_id;
+    public function getAuthor(): string {
+        return $this->author;
     }
-    public function setUserId(int $user_id) {
-        $this->user_id = $user_id;
+    public function setAuthor(string $author) {
+        $this->author = $author;
     }
 	public function getLast_Saved(): string {
 		return $this->last_saved;

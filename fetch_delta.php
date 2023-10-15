@@ -1,26 +1,13 @@
 <?php 
+require_once('DatabaseService.php');
+require_once('DocumentService.php');
+require_once('Document.php');
 $documentId = $_GET['document_id'];
 
-$servername = "localhost";
-$user = "root";
-$pass= "";
-$db = "wordprocessordb";
-// Create connection
-$conn = new mysqli($servername, $user, $pass, $db);
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-$sql = "SELECT delta FROM document WHERE id = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $documentId);
-$stmt->execute();
-$stmt->bind_result($serializedDelta);
-$stmt->fetch();
-$stmt->close();
-
-echo $serializedDelta;
-
-$conn->close();
+$db = new DatabaseService("localhost", "root", "", "wordprocessordb");  
+$docService = new DocumentService($db);  
+$doc = $docService->getDocumentById((int)$documentId);
+echo $doc->getDelta();
+$db->closeConnection();
 
 ?>

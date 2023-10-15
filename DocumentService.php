@@ -61,6 +61,18 @@ class DocumentService implements DocumentServiceInterface {
         }
     }
 
+    public function updateLastSavedWithNow(int $documentId): string {
+        $sql = "UPDATE document SET last_saved = ? WHERE id = ?";
+        $params = [date('Y-m-d H:i:s'), $documentId];
+        $result = $this->databaseService->executeQuery($sql, $params, "si", "update");
+        if($result) {
+            return "";
+        }
+        else {
+            return "There was an error updating last_saved on the document";
+        }
+    }
+
     public function getDocumentTitleFromId(int $documentId): string {
         $sql = "SELECT title FROM document WHERE id = ?";
         $result = $this->databaseService->executeQuery($sql, [$documentId], "i", "select");
@@ -72,4 +84,51 @@ class DocumentService implements DocumentServiceInterface {
         }
     }
 
+    public function deleteDocumentById(int $documentId): string {
+        $sql = "DELETE FROM document WHERE id = ?";
+        $result = $this->databaseService->executeQuery($sql, [$documentId], "i", "delete");
+        if($result) {
+            return "Document deleted.";
+        }
+        else {
+            return "There was an error deleting the document.";
+        }
+    }
+
+    public function getMyDocuments(string $username): array {
+        $sql = "SELECT * FROM document WHERE author = ? ORDER BY last_saved DESC";
+        $result = $this->databaseService->executeQuery($sql, [$username], "s", "select");
+        $documents = []; 
+
+        while ($row = $result->fetch_assoc()) {
+            $document = new Document();
+            $document->setId($row['id']);
+            $document->setTitle($row['title']);
+            $document->setAuthor($row['author']);
+            $document->setLast_Saved($row['last_saved']);
+            $document->setDelta($row['delta']);
+
+            $documents[] = $document;
+        }
+        return $documents;
+    }
+
+    public function getMyDocumentsByTitle(string $username, string $title): array {
+        $sql = "SELECT * FROM document WHERE author = ? AND BINARY title LIKE ? ORDER BY last_saved DESC";
+        $searchQuery = "%" . $title . "%";
+        $result = $this->databaseService->executeQuery($sql, [$username, $searchQuery], "ss", "select");
+        $documents = []; 
+
+        while ($row = $result->fetch_assoc()) {
+            $document = new Document();
+            $document->setId($row['id']);
+            $document->setTitle($row['title']);
+            $document->setAuthor($row['author']);
+            $document->setLast_Saved($row['last_saved']);
+            $document->setDelta($row['delta']);
+
+            $documents[] = $document;
+        }
+        return $documents;
+    }
 }

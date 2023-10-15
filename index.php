@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Online Text Editor</title>
+   <title>Online Text Editor</title>
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <!-- Main Quill library -->
     <script src="//cdn.quilljs.com/1.3.6/quill.js"></script>
@@ -10,7 +10,6 @@
     <link href="quill.snow.css" rel="stylesheet">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <style>
         #editor {
@@ -23,17 +22,34 @@
         h1 {
             text-align: center;
         }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding-top: 1%;
+        }
+        
     </style>
     <!-- navbar functionality -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
 </head>
 <body>
     <?php 
+    function PersistEditorContentsAfterSubmit() {
+        echo '<script>;
+        $(document).ready(function(){
+            var savedContent = ' . $_POST["editor_contents"] . 
+            '; quill.setContents(savedContent);
+        });
+        </script>';
+    }
+    
     require_once('DatabaseService.php');
     require_once('DocumentService.php');
     require_once('Document.php');
     include 'navbar.php'; 
     session_start();
+    date_default_timezone_set('America/New_York'); // for last_saved datetime inserts
     echo $_SESSION["userID"];
     echo $_SESSION['username'];
 
@@ -52,29 +68,26 @@
             $_SESSION["open_document_name"] = $doc->getTitle();
             
             // Persist the contents of the quill editor after saving
-            echo '<script>;
-            $(document).ready(function(){
-                var savedContent = ' . $doc->getDelta() . 
-                '; quill.setContents(savedContent);
-            });
-            </script>';
+            PersistEditorContentsAfterSubmit();
         }
         if($_POST["submit"] == 'save') {  
             $_SESSION["editor_menu_button_clicked"] = true;
             // If the document is new (unsaved)
             if (!isset($_SESSION["open_document_id"])) {
-                // Persist contents of the quill editor and display modal when client runs (right after server-side code runs)
+                // Persist contents of the quill editor and DISPLAY MODAL when client runs (right after server-side code runs)
+                PersistEditorContentsAfterSubmit();
                 echo "<script type='text/javascript'>
                     $(document).ready(function(){
-                        var savedContent = " . $_POST["editor_contents"] . 
-                        "; quill.setContents(savedContent);
                         $('#myModal').modal('show');
                     });
                 </script>";
             }
             // If already on an opened document - overwrite 
             else {
-
+                $docService->updateDocumentContents($_SESSION["open_document_id"], $_POST["editor_contents"]);
+                $docService->updateLastSavedWithNow($_SESSION["open_document_id"]);
+                // Persist the contents of the quill editor after saving
+                PersistEditorContentsAfterSubmit();
             }
         }
         
@@ -85,7 +98,7 @@
         unset($_SESSION["open_document_id"]);
         unset($_SESSION["open_document_name"]);
     }
-    unset($_SESSION["opened_from_button"]);
+    //unset($_SESSION["opened_from_button"]);
     unset($_SESSION["editor_menu_button_clicked"]);
 
     // If 'open_document_name' is not set, set it to default value
@@ -100,12 +113,15 @@
     <form id="editor-form" action="index.php" method="post">
         <div id="editor"></div>
         <input type="hidden" id="editor-contents" name="editor_contents">
-        <button type="submit" value="save" name="submit" class="btn btn-default">Save</button>
-        <button data-toggle="modal" type='button' class="btn btn-default" data-target="#myModal">Save As</button>
+        <div class="button-container">
+            <button type="button" class="btn btn-success">Record Speech</button>
+        </div>
+        <div class="button-container">
+            <button type="submit" value="save" name="submit" class="btn btn-default">Save</button>
+            <button data-toggle="modal" type='button' class="btn btn-default" data-target="#myModal">Save As</button>
+        </div>
     </form>
-    <!-- Load document with id 1 -->
 
-    <button value="load" name="load" class="btn btn-default" onclick="Load(29)">Load Document</button>
     </div>
     <div id="myModal" class="modal fade" tabindex="-1" role="dialog">
 		<div class="modal-dialog">
@@ -161,20 +177,45 @@
             }
         });
     
-        function Load(documentId) {
-            console.log("Test");
+        function LoadDocumentContents(documentId) {
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function() {
                 if(xhr.readyState === 4 && xhr.status === 200) {
                     var serializedDelta = xhr.responseText;
-                    console.log(serializedDelta);
                     var deltaObject= JSON.parse(serializedDelta);
                     quill.setContents(deltaObject);
+                }
+                else {
+                    console.log("Error", xhr.status, xhr.statusText)
                 }
             };
             xhr.open('GET', 'fetch_delta.php?document_id=' + documentId, true);
             xhr.send();
         }
+
+        function UnsetOpenedFromButtonSessionVariable() {
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'unset_session_variable.php', true);
+            xhr.onreadystatechange = function() {
+                if(xhr.readyState === 4) {
+                    if(xhr.status === 200) {
+                        console.log("opened_from_button session variable unset succesfully")
+                    }
+                    else {
+                        console.log("Error", xhr.status, xhr.statusText)
+                    }
+                }
+            };
+            xhr.send();
+        }
+
+        // Load the document's contents if open_document_id and opened_from_button are set (i.e. if opening from another page)
+        $(document).ready(function(){
+            if(<?php echo isset($_SESSION["opened_from_button"]) && isset($_SESSION["open_document_id"]) ? 'true' : 'false'; ?>) {
+                LoadDocumentContents(<?php echo isset($_SESSION["open_document_id"]) ? $_SESSION["open_document_id"] : 'null'; ?>);
+            }
+            UnsetOpenedFromButtonSessionVariable();
+        });
         
     </script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>	

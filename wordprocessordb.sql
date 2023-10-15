@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 15, 2023 at 12:39 AM
+-- Generation Time: Oct 15, 2023 at 06:16 AM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 8.2.0
 
@@ -40,7 +40,13 @@ CREATE TABLE `document` (
 --
 
 INSERT INTO `document` (`id`, `title`, `delta`, `author`, `last_saved`) VALUES
-(1, 'Document 1', '{\"ops\":[{\"insert\":\"EXAMPLE\\nI am free\"},{\"attributes\":{\"list\":\"bullet\"},\"insert\":\"\\n\"},{\"insert\":\"I am loved\"},{\"attributes\":{\"list\":\"bullet\"},\"insert\":\"\\n\"},{\"insert\":\"I am amazing\"},{\"attributes\":{\"list\":\"bullet\"},\"insert\":\"\\n\"}]}', 'Tree', '2023-10-15 00:34:53');
+(12, 'New Document', '{\"ops\":[{\"insert\":\"Example\\n\"}]}', 'Tree', '2023-10-14 22:16:24'),
+(13, 'New Document', '{\"ops\":[{\"insert\":\"\\n\"}]}', 'Tree', '2023-10-14 22:56:55'),
+(14, 'New Document22', '{\"ops\":[{\"insert\":\"Example\\n\"}]}', 'Tree', '2023-10-14 23:42:05'),
+(15, 'New Document24', '{\"ops\":[{\"insert\":\"Example\\n\"},{\"attributes\":{\"italic\":true,\"bold\":true},\"insert\":\"HELLO\"},{\"insert\":\"\\n\"},{\"attributes\":{\"size\":\"huge\"},\"insert\":\"This is a test\"},{\"insert\":\"\\n\"},{\"attributes\":{\"size\":\"huge\"},\"insert\":\"I am great\"},{\"attributes\":{\"list\":\"bullet\"},\"insert\":\"\\n\"},{\"attributes\":{\"size\":\"huge\",\"color\":\"#ffc266\"},\"insert\":\"blablabla\"},{\"attributes\":{\"list\":\"bullet\"},\"insert\":\"\\n\"}]}', 'Tree', '2023-10-15 00:14:50'),
+(16, 'New Document26', '{\"ops\":[{\"insert\":\"Example\\n\"}]}', 'Tree', '2023-10-14 23:53:24'),
+(17, 'New Document24', '{\"ops\":[{\"insert\":\"Example22\\n\"}]}', 'Tree', '2023-10-15 00:04:15'),
+(18, 'New Document', '{\"ops\":[{\"insert\":\"Blabla\\n\"}]}', 'Tree', '2023-10-15 00:02:19');
 
 -- --------------------------------------------------------
 
@@ -88,7 +94,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `document`
 --
 ALTER TABLE `document`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `users`

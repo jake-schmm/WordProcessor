@@ -39,15 +39,23 @@
         require_once('DatabaseService.php');
         require_once('DocumentService.php');
         require_once('Document.php');
+        require_once("DocumentsManager.php");
         include 'navbar.php'; 
         session_start();
         $db = new DatabaseService("localhost", "root", "", "wordprocessordb");  
         $docService = new DocumentService($db); 
+        $docManager = new DocumentsManager($docService);
         
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if($_POST["submit"] == 'open') {
-                $_SESSION["opened_from_button"] = "true";
-                $docService->openDocument($_POST["doc_id"]);
+                $result = $docManager->openDocument($_POST["doc_id"]);
+                if($result) {
+                    $_SESSION["opened_from_button"] = "true";
+                    $_SESSION["open_document_id"] = $result["open_document_id"];
+                    $_SESSION["open_document_name"] = $result["open_document_name"];
+                    header("Location: index.php");
+                    exit();
+                }
             }
             if($_POST["submit"] == 'delete') {
                 $docService->deleteDocumentById($_POST["doc_id"]);

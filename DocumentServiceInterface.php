@@ -1,6 +1,8 @@
 <?php 
 interface DocumentServiceInterface {
-    public function openDocument(int $documentId): void;
+    
+    // Returns an array containing open_document_id and open_document_name 
+    public function openDocument(int $documentId): array;
 
     public function getDocumentById(int $documentId): ?Document;
 
@@ -10,7 +12,7 @@ interface DocumentServiceInterface {
 
     public function updateLastSavedWithNow(int $documentId): string;
 
-    public function getDocumentTitleFromId(int $documentId): string;
+    public function getDocumentTitleFromId(int $documentId): string | bool;
 
     public function deleteDocumentById(int $documentId): string;
 

@@ -9,14 +9,18 @@ class DocumentService implements DocumentServiceInterface {
         $this->databaseService = $databaseService;
     }
 
-    public function openDocument(int $documentId): void {
-        if (session_status() == PHP_SESSION_NONE) {
-            session_start();
-        }
-        $_SESSION["open_document_id"] = $documentId;
-        $_SESSION["open_document_name"] = $this->getDocumentTitleFromId($documentId);
-        header("Location: index.php");
-        exit();
+    public function openDocument(int $documentId): array {
+        // if (session_status() == PHP_SESSION_NONE) {
+        //     session_start();
+        // }
+        // $_SESSION["open_document_id"] = $documentId;
+        // $_SESSION["open_document_name"] = $this->getDocumentTitleFromId($documentId);
+        // header("Location: index.php");
+        // exit();
+        $result = [];
+        $result["open_document_id"] = $documentId;
+        $result["open_document_name"] = $this->getDocumentTitleFromId($documentId);
+        return $result;
     }
 
     public function getDocumentById(int $documentId): ?Document {
@@ -73,14 +77,15 @@ class DocumentService implements DocumentServiceInterface {
         }
     }
 
-    public function getDocumentTitleFromId(int $documentId): string {
+    public function getDocumentTitleFromId(int $documentId): string | bool {
         $sql = "SELECT title FROM document WHERE id = ?";
         $result = $this->databaseService->executeQuery($sql, [$documentId], "i", "select");
         if ($result !== false && $result->num_rows > 0) {
             $row = $result->fetch_assoc();
             return $row['title'];
         } else {
-            return "Could not get document";
+            //return "Could not get document";
+            return false;
         }
     }
 

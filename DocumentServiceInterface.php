@@ -14,7 +14,7 @@ interface DocumentServiceInterface {
 
     public function getDocumentTitleFromId(int $documentId): string | bool;
 
-    public function deleteDocumentById(int $documentId): string;
+    public function deleteDocumentById(int $documentId): bool;
 
     // public function getFriendsDocuments(int $userId, array $friendsList): array;
 

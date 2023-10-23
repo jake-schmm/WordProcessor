@@ -89,14 +89,14 @@ class DocumentService implements DocumentServiceInterface {
         }
     }
 
-    public function deleteDocumentById(int $documentId): string {
+    public function deleteDocumentById(int $documentId): bool {
         $sql = "DELETE FROM document WHERE id = ?";
         $result = $this->databaseService->executeQuery($sql, [$documentId], "i", "delete");
         if($result) {
-            return "Document deleted.";
+            return true;
         }
         else {
-            return "There was an error deleting the document.";
+            return false;
         }
     }
 

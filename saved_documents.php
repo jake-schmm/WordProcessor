@@ -36,16 +36,14 @@
 </head>
 <body>
     <?php
-        require_once('DatabaseService.php');
-        require_once('DocumentService.php');
+        require_once('bootstrap.php');
         require_once('Document.php');
-        require_once("DocumentsManager.php");
+        require_once('Exceptions.php');
         include 'navbar.php'; 
+        $error_message = '';
         session_start();
-        $db = new DatabaseService("localhost", "root", "", "wordprocessordb");  
-        $docService = new DocumentService($db); 
-        $docManager = new DocumentsManager($docService);
         
+        $shouldGetMyDocuments = true;
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if($_POST["submit"] == 'open') {
                 $result = $docManager->openDocument($_POST["doc_id"]);
@@ -57,17 +55,30 @@
                     exit();
                 }
             }
-            if($_POST["submit"] == 'delete') {
-                $docService->deleteDocumentById($_POST["doc_id"]);
+            elseif($_POST["submit"] == 'delete') {
+                $docManager->deleteDocumentById($_POST["doc_id"]);
+            }
+            // Handle when the user clicks on the "Search" button and filtering by name
+            elseif($_POST["submit"] == 'filter') {
+                $shouldGetMyDocuments = false;
+                try {
+                    $docArray = $docManager->getMyDocumentsByTitle($_SESSION["username"], $_POST["documentNameFilterInput"]);
+                }
+                catch(UserNonExistentException $e) {
+                    $docArray = [];
+                    $error_message = $e->getMessage();
+                }  
             }
         }
 
         // populate docArray (must place this after code that handles delete so that it updates after delete)
-        $docArray = $docService->getMyDocuments($_SESSION["username"]); 
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if($_POST["submit"] == 'filter') {
-                $docArray = $docService->getMyDocumentsByTitle($_SESSION["username"], $_POST["documentNameFilterInput"]);
+        if($shouldGetMyDocuments) {
+            try {
+                $docArray = $docManager->getMyDocuments($_SESSION["username"]); 
+            }
+            catch(UserNonExistentException $e) {
+                $docArray = [];
+                $error_message = $e->getMessage();
             }
         }
     ?>
@@ -80,6 +91,12 @@
                 <button type="submit" name="submit" value="filter" class = "btn btn-primary">Search</button>
             </div>
         </form>
+        <br/>
+        <?php if (!empty(trim($error_message))): ?>
+        <div class="alert alert-danger" role="alert">
+          <?php echo $error_message; ?>
+        </div>
+        <?php endif; ?>
         <div style="overflow-y: auto; max-height: 800px;">
         <?php 
             

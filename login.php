@@ -1,35 +1,22 @@
 <?php
-$servername = "localhost";
-$user = "root";
-$pass= "";
-$db = "wordprocessordb";
+require_once('bootstrap.php');
 $error_message = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = $_POST['username'];
     $password = $_POST['password'];
   
-    // Connect to the database
-    $conn = new mysqli($servername, $user, $pass, $db);
-  
-    // Check if the username and password are valid
-    $stmt = $conn->prepare("SELECT * FROM users WHERE username=? AND password=?");
-    $stmt->bind_param("ss", $username, $password);
-    $stmt->execute();
-    $stmt->store_result();
-    if ($stmt->num_rows == 1) {
+    $result = $userManager->authenticateUser($username, $password);
+    if($result !== null) {
         session_start();
-        $user_id = null;
-        $stmt->bind_result($user_id, $username, $password);
-        if($stmt->fetch()) {
-            $_SESSION['userID'] = $user_id;
-            $_SESSION['username'] = $username;
-        }
-        
+        $_SESSION["userID"] = $result;
+        $_SESSION["username"] = $username;
+
         header('Location: index.php');
-    } else {
-        // Login failed
-        $error_message = 'Invalid username or password';
+        exit();
+    }
+    else {
+        $error_message = "Invalid username or password";
     }
 }
 ?>

@@ -1,42 +1,28 @@
 <?php
-$servername = "localhost";
-$user = "root";
-$pass= "";
-$db = "wordprocessordb";
+require_once('bootstrap.php');
+require_once('Exceptions.php');
+
 $error_messages = array();
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = $_POST['username'];
     $password = $_POST['password'];
     $password_confirm = $_POST['password_confirm'];
-
-    if (empty($username)) {
-        $error_messages[] = "Username required.";
+    $result = ["status" => "error", "message" => "Unknown error"];
+    try {
+        $result = $userManager->registerUser($username, $password, $password_confirm);
+        if($result["status"] === "error") {
+            $error_messages[] = $result["message"];
+        }
     }
-    if (empty($password)) {
-        $error_messages[] = "Password required.";
+    catch(UserAlreadyExistsException $e) {
+        $error_messages[] = $e->getMessage();
     }
-    if ($password != $password_confirm) {
-        $error_messages[] = "Passwords must match.";
-    }
-
-    $conn = new mysqli($servername, $user, $pass, $db);
-    $stmt = $conn->prepare("SELECT * FROM users WHERE username=?");
-    $stmt->bind_param("s", $username);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    if($result->num_rows > 0) {
-        $error_messages[] = 'User with username already exists';
-    }
-    else {
-        $stmt = $conn->prepare("INSERT INTO users (username, password) VALUES (?, ?)");
-        $stmt->bind_param("ss", $username, $password);
-        $stmt->execute();
+    if(empty($error_messages)) {
         header('Location: login.php');
+        exit();
     }
-    $stmt->close();
-    $conn->close();
 }
-
 ?>
 <!DOCTYPE html>
 <html>

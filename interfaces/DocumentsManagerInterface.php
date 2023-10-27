@@ -12,4 +12,5 @@ interface DocumentsManagerInterface {
     * Return id of document that was added as message of ManagerResponse if successful, error message in message if not
     */
     public function addDocument(Document $doc): ManagerResponse;
+    public function createForumPost(int $documentId, int $visibility): ManagerResponse;
 }

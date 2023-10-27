@@ -2,21 +2,24 @@
 require_once('../interfaces/DocumentsManagerInterface.php');
 require_once('../interfaces/DocumentServiceInterface.php');
 require_once('../interfaces/UserServiceInterface.php');
+require_once('../interfaces/ForumServiceInterface.php');
 require_once('../models/Document.php');
 require_once('../models/ManagerResponse.php');
 
 class DocumentsManager implements DocumentsManagerInterface {
     private DocumentServiceInterface $docService;
     private UserServiceInterface $userService;
-    public function __construct(DocumentServiceInterface $docService, UserServiceInterface $userService) {
+    private ForumServiceInterface $forumService;
+    public function __construct(DocumentServiceInterface $docService, UserServiceInterface $userService, ForumServiceInterface $forumService) {
         $this->docService = $docService;
         $this->userService = $userService;
+        $this->forumService = $forumService;
     }
 
     public function openDocument(int $documentId): ManagerResponse {
         try {
             $resultArr = $this->docService->openDocument($documentId);
-            // Check if result is empty - i.e. if documentId didn't exist
+            // If documentId didn't exist
             if(empty($resultArr)) {
                 return new ManagerResponse("error", "There was an error opening the document.");
             }
@@ -130,7 +133,32 @@ class DocumentsManager implements DocumentsManagerInterface {
         
     }
 
+    public function createForumPost(int $documentId, int $visibility): ManagerResponse {
+        try {
+            // Because the underlying query is insert, result will always be true, never false. 
+            // In all other cases, the method will throw a RuntimeException. i.e. if documentId or visibility are invalid values (because they are foreign keys)
+            $result = $this->forumService->createForumPost($documentId, $visibility);
+            return new ManagerResponse("success", "Publishing document to forum was successful.");
 
+        } catch(RuntimeException $e) {
+            if(str_contains($e->getMessage(), "Duplicate entry") && str_contains($e->getMessage(), "PRIMARY")) {
+                return new ManagerResponse("error", "This document already has been published with visibility " . $this->intToEnumName($visibility));
+            }
+            return new ManagerResponse("error", "A database error occurred: " . $e->getMessage());
+        }
+    }
+
+    // Helper method
+    private function intToEnumName(int $intValue): ?string {
+        foreach (Visibility::getAllValues() as $enumValue) {
+            if ($intValue === $enumValue->value) {
+                return $enumValue->name;
+            }
+        }
+        return null; // Return null if no matching enum name is found
+    }
+
+    
 
 
 

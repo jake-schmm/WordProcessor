@@ -41,31 +41,43 @@
         require_once('Exceptions.php');
         include 'navbar.php'; 
         $error_message = '';
+        $docArray = [];
         session_start();
         
         $shouldGetMyDocuments = true;
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if($_POST["submit"] == 'open') {
                 $result = $docManager->openDocument($_POST["doc_id"]);
-                if($result) {
+                if($result->status === "success") {
                     $_SESSION["opened_from_button"] = "true";
-                    $_SESSION["open_document_id"] = $result["open_document_id"];
-                    $_SESSION["open_document_name"] = $result["open_document_name"];
+                    $_SESSION["open_document_id"] = $result->message["open_document_id"];
+                    $_SESSION["open_document_name"] = $result->message["open_document_name"];
                     header("Location: index.php");
                     exit();
                 }
+                else {
+                    $error_message = $result->message;
+                }
             }
             elseif($_POST["submit"] == 'delete') {
-                $docManager->deleteDocumentById($_POST["doc_id"]);
+                $result = $docManager->deleteDocumentById($_POST["doc_id"]);
+                if($result->status === "error") {
+                    $error_message = $result->message;
+                }
             }
             // Handle when the user clicks on the "Search" button and filtering by name
             elseif($_POST["submit"] == 'filter') {
                 $shouldGetMyDocuments = false;
                 try {
-                    $docArray = $docManager->getMyDocumentsByTitle($_SESSION["username"], $_POST["documentNameFilterInput"]);
+                    $result = $docManager->getMyDocumentsByTitle($_SESSION["username"], $_POST["documentNameFilterInput"]);
+                    if($result->status === "success") {
+                        $docArray = $result->message;
+                    }
+                    else {
+                        $error_message = $result->message;
+                    }
                 }
                 catch(UserNonExistentException $e) {
-                    $docArray = [];
                     $error_message = $e->getMessage();
                 }  
             }
@@ -74,10 +86,15 @@
         // populate docArray (must place this after code that handles delete so that it updates after delete)
         if($shouldGetMyDocuments) {
             try {
-                $docArray = $docManager->getMyDocuments($_SESSION["username"]); 
+                $result = $docManager->getMyDocuments($_SESSION["username"]); 
+                if($result->status === "success") {
+                    $docArray = $result->message;
+                }
+                else {
+                    $error_message = $result->message;
+                }
             }
             catch(UserNonExistentException $e) {
-                $docArray = [];
                 $error_message = $e->getMessage();
             }
         }

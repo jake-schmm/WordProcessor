@@ -7,16 +7,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $password = $_POST['password'];
   
     $result = $userManager->authenticateUser($username, $password);
-    if($result !== null) {
+    if($result->status === "success") {
         session_start();
-        $_SESSION["userID"] = $result;
+        $_SESSION["userID"] = $result->message; // message will contain userID of authenticated user if status is success
         $_SESSION["username"] = $username;
 
         header('Location: index.php');
         exit();
     }
     else {
-        $error_message = "Invalid username or password";
+        $error_message = $result->message;
     }
 }
 ?>

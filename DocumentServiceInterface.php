@@ -6,11 +6,12 @@ interface DocumentServiceInterface {
 
     public function getDocumentById(int $documentId): ?Document;
 
-    public function addDocument(Document $doc): string;
+    // Return id of the document that was added OR null if nothing gets inserted 
+    public function addDocument(Document $doc): ?int;
 
-    public function updateDocumentContents(int $documentId, string $newDelta): string;
+    public function updateDocumentContents(int $documentId, string $newDelta): bool;
 
-    public function updateLastSavedWithNow(int $documentId): string;
+    public function updateLastSavedWithNow(int $documentId): bool;
 
     public function getDocumentTitleFromId(int $documentId): string | bool;
 

@@ -1,13 +1,14 @@
 <?php 
-require_once('DatabaseService.php');
-require_once('DocumentService.php');
+require_once('bootstrap.php');
 require_once('Document.php');
 $documentId = $_GET['document_id'];
 
-$db = new DatabaseService("localhost", "root", "", "wordprocessordb");  
-$docService = new DocumentService($db);  
-$doc = $docService->getDocumentById((int)$documentId);
-echo $doc->getDelta();
-$db->closeConnection();
+$result = $docManager->getDocumentById((int)$documentId);
 
+if($result->status === "success") {
+    // return Document's contents
+    $result->message = $result->message->getDelta();
+}
+header('Content-Type: application/json');
+echo json_encode($result);
 ?>

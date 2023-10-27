@@ -9,20 +9,19 @@ class DocumentService implements DocumentServiceInterface {
         $this->databaseService = $databaseService;
     }
 
+    // Returns an empty array if unsuccessful, or an array with document id and name if successful
     public function openDocument(int $documentId): array {
-        // if (session_status() == PHP_SESSION_NONE) {
-        //     session_start();
-        // }
-        // $_SESSION["open_document_id"] = $documentId;
-        // $_SESSION["open_document_name"] = $this->getDocumentTitleFromId($documentId);
-        // header("Location: index.php");
-        // exit();
         $result = [];
-        $result["open_document_id"] = $documentId;
-        $result["open_document_name"] = $this->getDocumentTitleFromId($documentId);
+        
+        $title = $this->getDocumentTitleFromId($documentId);
+        if (is_string($title)) {
+            $result["open_document_id"] = $documentId;
+            $result["open_document_name"] = $title;
+        }
         return $result;
     }
 
+    // Returns null if documentId doesn't exist in database. Otherwise, return Document with id
     public function getDocumentById(int $documentId): ?Document {
         $sql = "SELECT * FROM document WHERE id = ?";
         $result = $this->databaseService->executeQuery($sql, [$documentId], "i", "select");
@@ -41,40 +40,30 @@ class DocumentService implements DocumentServiceInterface {
         }
     }
 
-    public function addDocument(Document $doc): string {
+    public function addDocument(Document $doc): ?int {
         $sql = "INSERT INTO document (title, delta, author, last_saved) VALUES (?, ?, ?, ?)";
         $result = $this->databaseService->executeQuery($sql, 
                 [$doc->getTitle(), $doc->getDelta(), $doc->getAuthor(), $doc->getLast_Saved()], "ssss", "insert");
         if($result) {
-            return "Document saved.";
+            return $this->databaseService->getMySqli()->insert_id;
         }
         else {
-            return "There was an error saving the document.";
+            return null;
         }
     }
 
-    public function updateDocumentContents(int $documentId, string $newDelta): string {
+    public function updateDocumentContents(int $documentId, string $newDelta): bool {
         $sql = "UPDATE document SET delta = ? WHERE id = ?";
         $params = [$newDelta, $documentId];
         $result = $this->databaseService->executeQuery($sql, $params, "si", "update");
-        if($result) {
-            return "Document saved.";
-        }
-        else {
-            return "There was an error saving the document";
-        }
+        return $result; // true if num_rows affected > 0, false otherwise (i.e. if documentId was not found)
     }
 
-    public function updateLastSavedWithNow(int $documentId): string {
+    public function updateLastSavedWithNow(int $documentId): bool {
         $sql = "UPDATE document SET last_saved = ? WHERE id = ?";
         $params = [date('Y-m-d H:i:s'), $documentId];
         $result = $this->databaseService->executeQuery($sql, $params, "si", "update");
-        if($result) {
-            return "";
-        }
-        else {
-            return "There was an error updating last_saved on the document";
-        }
+        return $result; // true if num_rows affected > 0, false otherwise (i.e. if documentId was not found)
     }
 
     public function getDocumentTitleFromId(int $documentId): string | bool {

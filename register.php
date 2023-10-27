@@ -11,8 +11,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $result = ["status" => "error", "message" => "Unknown error"];
     try {
         $result = $userManager->registerUser($username, $password, $password_confirm);
-        if($result["status"] === "error") {
-            $error_messages[] = $result["message"];
+        if($result->status === "error") {
+            $error_messages[] = $result->message;
         }
     }
     catch(UserAlreadyExistsException $e) {

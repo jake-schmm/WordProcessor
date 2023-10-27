@@ -1,5 +1,5 @@
 <?php
-require_once('bootstrap.php');
+require_once('../bootstrap.php');
 $error_message = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {

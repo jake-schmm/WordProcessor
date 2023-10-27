@@ -1,6 +1,6 @@
 <?php
-require_once('UserServiceInterface.php');
-require_once('DatabaseServiceInterface.php');
+require_once('../interfaces/UserServiceInterface.php');
+require_once('../interfaces/DatabaseServiceInterface.php');
 
 class UserService implements UserServiceInterface {
     private DatabaseServiceInterface $databaseService;

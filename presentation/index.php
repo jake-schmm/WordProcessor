@@ -7,7 +7,7 @@
     <script src="//cdn.quilljs.com/1.3.6/quill.js"></script>
     <script src="//cdn.quilljs.com/1.3.6/quill.min.js"></script>
 
-    <link href="quill.snow.css" rel="stylesheet">
+    <link href="../css/quill.snow.css" rel="stylesheet">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
 
@@ -44,8 +44,8 @@
         </script>';
     }
     
-    require_once('bootstrap.php');
-    require_once('Document.php');
+    require_once('../bootstrap.php');
+    require_once('../models/Document.php');
     include 'navbar.php'; 
     session_start();
     date_default_timezone_set('America/New_York'); // for last_saved datetime inserts

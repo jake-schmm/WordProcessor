@@ -1,9 +1,9 @@
 <?php 
-require_once('DatabaseService.php');
-require_once('UserService.php');
-require_once('DocumentService.php');
-require_once('UserManager.php');
-require_once('DocumentsManager.php');
+require_once('data_access/DatabaseService.php');
+require_once('bsnlogic/UserService.php');
+require_once('bsnlogic/DocumentService.php');
+require_once('manager/UserManager.php');
+require_once('manager/DocumentsManager.php');
 $dbService = new DatabaseService("localhost", "root", "", "wordprocessordb");
 $userService = new UserService($dbService);
 $userManager = new UserManager($userService);

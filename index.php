@@ -44,14 +44,12 @@
         </script>';
     }
     
-    require_once('DatabaseService.php');
-    require_once('DocumentService.php');
+    require_once('bootstrap.php');
     require_once('Document.php');
     include 'navbar.php'; 
     session_start();
     date_default_timezone_set('America/New_York'); // for last_saved datetime inserts
-    echo $_SESSION["userID"];
-    echo $_SESSION['username'];
+    $error_message = "";
 
     $db = new DatabaseService("localhost", "root", "", "wordprocessordb");  
     $docService = new DocumentService($db);     
@@ -63,9 +61,14 @@
             $doc->setAuthor($_SESSION['username']);
             $doc->setLast_Saved(date('Y-m-d H:i:s'));
             $doc->setDelta($_POST['editor_contents']);
-            $docService->addDocument($doc);
-            $_SESSION["open_document_id"] = $db->getMySqli()->insert_id;
-            $_SESSION["open_document_name"] = $doc->getTitle();
+            $response = $docManager->addDocument($doc);
+            if($response->status === "success") {
+                $_SESSION["open_document_id"] = $response->message;
+                $_SESSION["open_document_name"] = $doc->getTitle();
+            }
+            else {
+                $error_message = $response->message;
+            }
             
             // Persist the contents of the quill editor after saving
             PersistEditorContentsAfterSubmit();
@@ -84,8 +87,17 @@
             }
             // If already on an opened document - overwrite 
             else {
-                $docService->updateDocumentContents($_SESSION["open_document_id"], $_POST["editor_contents"]);
-                $docService->updateLastSavedWithNow($_SESSION["open_document_id"]);
+                $updateDocContentsResult = $docManager->updateDocumentContents($_SESSION["open_document_id"], $_POST["editor_contents"]);
+                if($updateDocContentsResult->status === "error") {
+                    $error_message = $updateDocContentsResult->message;
+                }
+                else {
+                    // Only update last_saved time if save was successful
+                    $updateLastSavedResult = $docManager->updateLastSavedWithNow($_SESSION["open_document_id"]);
+                    if($updateLastSavedResult->status === "error") {
+                        $error_message = $updateLastSavedResult->message;
+                    }
+                }
                 // Persist the contents of the quill editor after saving
                 PersistEditorContentsAfterSubmit();
             }
@@ -106,10 +118,16 @@
         $_SESSION["open_document_name"] = "New Document";
     }
    
-    $db->closeConnection();
     ?>
     <div class="container">
     <h1>Editing "<?php echo $_SESSION["open_document_name"];?>"</h1>
+    <div id="xhrErrorMessage" style="display: none" class="alert alert-danger" role="alert">
+    </div>
+    <?php if (!empty(trim($error_message))): ?>
+        <div class="alert alert-danger" role="alert">
+          <?php echo $error_message; ?>
+        </div>
+        <?php endif; ?>
     <form id="editor-form" action="index.php" method="post">
         <div id="editor"></div>
         <input type="hidden" id="editor-contents" name="editor_contents">
@@ -180,14 +198,23 @@
         function LoadDocumentContents(documentId) {
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function() {
-                if(xhr.readyState === 4 && xhr.status === 200) {
-                    var serializedDelta = xhr.responseText;
-                    var deltaObject= JSON.parse(serializedDelta);
-                    quill.setContents(deltaObject);
-                }
-                else {
-                    console.log("Error", xhr.status, xhr.statusText)
-                }
+                if(xhr.readyState === 4) {
+                    if(xhr.status === 200) {
+                        var responseObj = JSON.parse(xhr.responseText);
+                        if(responseObj.status === 'success') {
+                            var deltaObject= JSON.parse(responseObj.message);
+                            quill.setContents(deltaObject);
+                        }
+                        else {
+                            $("#xhrErrorMessage").show();
+                            $("#xhrErrorMessage").html(responseObj.message)
+                        }   
+                    } 
+                    // if xhr.status !== 200
+                    else {
+                        console.log("Error", xhr.status, xhr.statusText);
+                    }
+                } // readyState === 4
             };
             xhr.open('GET', 'fetch_delta.php?document_id=' + documentId, true);
             xhr.send();

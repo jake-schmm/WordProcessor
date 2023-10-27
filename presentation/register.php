@@ -1,6 +1,6 @@
 <?php
-require_once('bootstrap.php');
-require_once('Exceptions.php');
+require_once('../bootstrap.php');
+require_once('../Exceptions.php');
 
 $error_messages = array();
 

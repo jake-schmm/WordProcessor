@@ -1,6 +1,6 @@
 <?php 
-require_once('bootstrap.php');
-require_once('Document.php');
+require_once('../bootstrap.php');
+require_once('../models/Document.php');
 $documentId = $_GET['document_id'];
 
 $result = $docManager->getDocumentById((int)$documentId);

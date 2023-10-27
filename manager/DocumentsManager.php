@@ -1,9 +1,9 @@
 <?php
-require_once('DocumentsManagerInterface.php');
-require_once('DocumentServiceInterface.php');
-require_once('UserServiceInterface.php');
-require_once('Document.php');
-require_once('ManagerResponse.php');
+require_once('../interfaces/DocumentsManagerInterface.php');
+require_once('../interfaces/DocumentServiceInterface.php');
+require_once('../interfaces/UserServiceInterface.php');
+require_once('../models/Document.php');
+require_once('../models/ManagerResponse.php');
 
 class DocumentsManager implements DocumentsManagerInterface {
     private DocumentServiceInterface $docService;

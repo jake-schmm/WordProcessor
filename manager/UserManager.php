@@ -1,8 +1,8 @@
 <?php
-require_once('UserServiceInterface.php');
-require_once('UserManagerInterface.php');
-require_once('Exceptions.php');
-require_once('ManagerResponse.php');
+require_once('../interfaces/UserServiceInterface.php');
+require_once('../interfaces/UserManagerInterface.php');
+require_once('../Exceptions.php');
+require_once('../models/ManagerResponse.php');
 class UserManager implements UserManagerInterface {
     private UserServiceInterface $userService;
     public function __construct(UserServiceInterface $userService) {

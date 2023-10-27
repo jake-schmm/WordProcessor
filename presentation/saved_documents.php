@@ -36,9 +36,9 @@
 </head>
 <body>
     <?php
-        require_once('bootstrap.php');
-        require_once('Document.php');
-        require_once('Exceptions.php');
+        require_once('../bootstrap.php');
+        require_once('../models/Document.php');
+        require_once('../Exceptions.php');
         include 'navbar.php'; 
         $error_message = '';
         $docArray = [];

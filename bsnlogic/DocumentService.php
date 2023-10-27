@@ -1,6 +1,6 @@
 <?php
-require_once('DocumentServiceInterface.php');
-require_once('DatabaseServiceInterface.php');
+require_once('../interfaces/DocumentServiceInterface.php');
+require_once('../interfaces/DatabaseServiceInterface.php');
 
 class DocumentService implements DocumentServiceInterface {
     private DatabaseServiceInterface $databaseService;

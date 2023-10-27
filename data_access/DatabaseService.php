@@ -1,5 +1,5 @@
 <?php
-require_once('DatabaseServiceInterface.php');
+require_once('../interfaces/DatabaseServiceInterface.php');
 class DatabaseService implements DatabaseServiceInterface {
 
     private $mysqli;

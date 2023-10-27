@@ -5,6 +5,13 @@ class DatabaseService implements DatabaseServiceInterface {
     private $mysqli;
     public function __construct($host, $username, $password, $database) {
         $this->mysqli = new mysqli();
+
+        // Connect with MYSQLI_CLIENT_FOUND_ROWS flag on, which changes update queries' affected_rows to return 
+        //  a positive value if there were any matched rows, not only when rows were actually updated.
+        //  Without this flag, update queries would not result in positive affected_rows if new value matches existing value.
+        //  This flag will be needed when saving a file twice with the same contents each time - don't return false
+        //  for executeQuery inside updateDocumentContents which would result in an error message being displayed.
+        //  Only return false when the WHERE clause isn't found.
         $connected = $this->mysqli->real_connect($host, $username, $password, $database, NULL, NULL, MYSQLI_CLIENT_FOUND_ROWS);
        
          if (!$connected) {
@@ -41,12 +48,6 @@ class DatabaseService implements DatabaseServiceInterface {
         }
         $stmt->close();
         return $result;
-    }
-
-    public function closeConnection(): void {
-        if ($this->mysqli) {
-            $this->mysqli->close();
-        }
     }
 
     public function getMySqli(): mysqli {

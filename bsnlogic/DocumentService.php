@@ -92,26 +92,63 @@ class DocumentService implements DocumentServiceInterface {
     public function getMyDocuments(string $username): array {
         $sql = "SELECT * FROM document WHERE author = ? ORDER BY last_saved DESC";
         $result = $this->databaseService->executeQuery($sql, [$username], "s", "select");
-        $documents = []; 
-
-        while ($row = $result->fetch_assoc()) {
-            $document = new Document();
-            $document->setId($row['id']);
-            $document->setTitle($row['title']);
-            $document->setAuthor($row['author']);
-            $document->setLast_Saved($row['last_saved']);
-            $document->setDelta($row['delta']);
-
-            $documents[] = $document;
-        }
-        return $documents;
+        return $this->getDocumentsFromSelectResult($result);
     }
 
     public function getMyDocumentsByTitle(string $username, string $title): array {
         $sql = "SELECT * FROM document WHERE author = ? AND BINARY title LIKE ? ORDER BY last_saved DESC";
         $searchQuery = "%" . $title . "%";
         $result = $this->databaseService->executeQuery($sql, [$username, $searchQuery], "ss", "select");
-        $documents = []; 
+        return $this->getDocumentsFromSelectResult($result);
+    }
+
+    public function getPublicPublishedDocuments(): array {
+        $sql = "
+        SELECT doc.* 
+        FROM document AS doc
+        JOIN document_visibility AS dv ON doc.id = dv.document_id
+        WHERE dv.visibility_level_id = 1  -- Filter for 'public' visibility
+        ORDER BY doc.last_saved DESC";
+
+        $result = $this->databaseService->executeQuery($sql, [], "", "select");
+        return $this->getDocumentsFromSelectResult($result);
+    }
+
+    public function getPublicPublishedDocumentsByTitle(string $title): array {
+        $sql = "
+        SELECT doc.* 
+        FROM document AS doc
+        JOIN document_visibility AS dv ON doc.id = dv.document_id
+        WHERE BINARY doc.title LIKE ?
+        AND dv.visibility_level_id = 1  -- Filter for 'public' visibility
+        ORDER BY doc.last_saved DESC";
+
+        $searchQuery = "%" . $title . "%";
+        $result = $this->databaseService->executeQuery($sql, [$searchQuery], "s", "select");
+        return $this->getDocumentsFromSelectResult($result);
+    }
+
+    public function getMyPublishedDocumentsByTitle(string $username, string $title): array {
+        // Get all documents that were published (have an associated document_visibility record) with myself visibility
+        // and an author of $username
+        $sql = "
+        SELECT doc.*
+        FROM document AS doc
+        JOIN document_visibility AS dv ON doc.id = dv.document_id
+        WHERE doc.author = ? 
+        AND BINARY doc.title LIKE ?
+        AND dv.visibility_level_id = 3  -- Filter for 'myself' visibility
+        ORDER BY doc.last_saved DESC
+        ";
+
+        $searchQuery = "%" . $title . "%";
+        $result = $this->databaseService->executeQuery($sql, [$username, $searchQuery], "ss", "select");
+        return $this->getDocumentsFromSelectResult($result);
+    }
+
+    // Helper method
+    private function getDocumentsFromSelectResult(mysqli_result $result) {
+        $documents = [];
 
         while ($row = $result->fetch_assoc()) {
             $document = new Document();

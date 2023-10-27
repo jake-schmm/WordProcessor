@@ -46,13 +46,12 @@
     
     require_once('../bootstrap.php');
     require_once('../models/Document.php');
+    require_once('../models/Visibility.php');
     include 'navbar.php'; 
     session_start();
     date_default_timezone_set('America/New_York'); // for last_saved datetime inserts
     $error_message = "";
-
-    $db = new DatabaseService("localhost", "root", "", "wordprocessordb");  
-    $docService = new DocumentService($db);     
+   
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if($_POST["submit"] == 'saveAs') {
             $_SESSION["editor_menu_button_clicked"] = true;
@@ -102,6 +101,39 @@
                 PersistEditorContentsAfterSubmit();
             }
         }
+        if($_POST["submit"] == 'publish') {
+            $_SESSION["editor_menu_button_clicked"] = true;
+            PersistEditorContentsAfterSubmit();
+            // Only allow publishing on saved documents
+            if(!isset($_SESSION["open_document_id"])) {
+                $error_message = "Document must be saved first before publishing.";
+            }
+            // If the open document has been saved
+            else {
+                $result = new ManagerResponse("success", "");
+                $visibility = $_POST['visibility'] ?? null;
+
+                switch($visibility) {
+                    case 'public':
+                        // publish to public
+                        $result = $docManager->createForumPost($_SESSION["open_document_id"], Visibility::PUBLIC->value); 
+                        break;
+                    case 'friends':
+                        // publish to friends
+                        break;
+                    case 'myself':
+                        // publish to myself
+                        $result = $docManager->createForumPost($_SESSION["open_document_id"], Visibility::MYSELF->value); 
+                        break;
+                    default:
+                        break;
+                }
+
+                if($result->status === "error") {
+                    $error_message = $result->message;
+                }
+            }
+        }
         
     }
     // If 'opened_from_button' is not set and a menu button wasn't the last button clicked, reset document details.
@@ -110,7 +142,7 @@
         unset($_SESSION["open_document_id"]);
         unset($_SESSION["open_document_name"]);
     }
-    //unset($_SESSION["opened_from_button"]);
+    //unset($_SESSION["opened_from_button"]); -- this was moved into javascript section via xhr request
     unset($_SESSION["editor_menu_button_clicked"]);
 
     // If 'open_document_name' is not set, set it to default value
@@ -131,12 +163,18 @@
     <form id="editor-form" action="index.php" method="post">
         <div id="editor"></div>
         <input type="hidden" id="editor-contents" name="editor_contents">
-        <div class="button-container">
+        <!-- <div class="button-container">
             <button type="button" class="btn btn-success">Record Speech</button>
-        </div>
+        </div> -->
         <div class="button-container">
             <button type="submit" value="save" name="submit" class="btn btn-default">Save</button>
             <button data-toggle="modal" type='button' class="btn btn-default" data-target="#myModal">Save As</button>
+        </div>
+        <div class="button-container">
+            <label><input type="radio" name="visibility" value="public" required checked> Public</label>
+            <label><input type="radio" name="visibility" value="friends"> Friends</label>
+            <label><input type="radio" name="visibility" value="myself"> Myself</label>
+            <button type="submit" name="submit" value="publish" class="btn btn-default">Publish Document</button>
         </div>
     </form>
 
@@ -181,7 +219,8 @@
 
         document.getElementById('editor-form').addEventListener('submit', function(event) {
             var clickedButton = event.submitter;
-            if(clickedButton.value === 'save') {
+            // add more button values here to persist editor contents upon clicking the button
+            if(clickedButton.value === 'save' || clickedButton.value === 'publish') {
                 var editorContents = JSON.stringify(quill.getContents());
                 document.getElementById('editor-contents').value = editorContents;
             }

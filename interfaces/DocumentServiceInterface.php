@@ -17,13 +17,17 @@ interface DocumentServiceInterface {
 
     public function deleteDocumentById(int $documentId): bool;
 
-    // public function getFriendsDocuments(int $userId, array $friendsList): array;
-
-    // public function getPublicDocuments(): array;
-
     public function getMyDocuments(string $username): array;
 
     public function getMyDocumentsByTitle(string $username, string $title): array;
+
+    public function getPublicPublishedDocuments(): array;
+
+    public function getPublicPublishedDocumentsByTitle(string $title): array;
+
+    public function getMyPublishedDocumentsByTitle(string $username, string $title): array;
+
+    // public function getFriendsPublishedDocumentsByTitle(string $username, array $friendsList, string $title);
 
     // public function convertToPDF(Document $doc): void;
 }

@@ -158,8 +158,36 @@ class DocumentsManager implements DocumentsManagerInterface {
         return null; // Return null if no matching enum name is found
     }
 
-    
+    public function getPublicPublishedDocuments(): ManagerResponse {
+        try {
+            $result = $this->docService->getPublicPublishedDocuments();
+            return new ManagerResponse("success", $result); // return array of documents (could be empty)
+        } catch(RuntimeException $e) {
+            return new ManagerResponse("error", "A database error occurred: " . $e->getMessage());
+        }
+    }
 
+    public function getPublicPublishedDocumentsByTitle(string $title): ManagerResponse {
+        try {
+            $result = $this->docService->getPublicPublishedDocumentsByTitle($title);
+            return new ManagerResponse("success", $result); // return array of documents (could be empty)
+        } catch(RuntimeException $e) {
+            return new ManagerResponse("error", "A database error occurred: " . $e->getMessage());
+        }
+    }
+
+    public function getMyPublishedDocumentsByTitle(string $username, string $title): ManagerResponse {
+        if(!$this->userService->userExistsByUsername($username)) {
+            throw new UserNonExistentException("User doesn't exist.");
+        }
+        try {
+            $result = $this->docService->getMyPublishedDocumentsByTitle($username, $title);
+            return new ManagerResponse("success", $result); // return array of documents (could be empty)
+        } catch(RuntimeException $e) {
+            return new ManagerResponse("error", "A database error occurred: " . $e->getMessage());
+        }
+    }
+    
 
 
 

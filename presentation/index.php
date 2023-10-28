@@ -28,7 +28,14 @@
             gap: 10px;
             padding-top: 1%;
         }
-        
+        <?php
+        session_start();
+        $readOnly = isset($_SESSION['read_only_editor']);
+        // hide editor buttons if in read_only mode 
+        if($readOnly) {
+            echo '.hideOnReadOnly {display:none;}';
+        }
+        ?>
     </style>
     <!-- navbar functionality -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
@@ -48,11 +55,13 @@
     require_once('../models/Document.php');
     require_once('../models/Visibility.php');
     include 'navbar.php'; 
-    session_start();
     date_default_timezone_set('America/New_York'); // for last_saved datetime inserts
     $error_message = "";
-   
+    $readOnly = isset($_SESSION['read_only_editor']) ? 'true' : 'false';
+    unset($_SESSION["read_only_editor"]);
+    
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        // Save As button clicked
         if($_POST["submit"] == 'saveAs') {
             $_SESSION["editor_menu_button_clicked"] = true;
             $doc = new Document();
@@ -72,6 +81,7 @@
             // Persist the contents of the quill editor after saving
             PersistEditorContentsAfterSubmit();
         }
+        // Save button clicked
         if($_POST["submit"] == 'save') {  
             $_SESSION["editor_menu_button_clicked"] = true;
             // If the document is new (unsaved)
@@ -101,6 +111,7 @@
                 PersistEditorContentsAfterSubmit();
             }
         }
+        // Publish Document button clicked
         if($_POST["submit"] == 'publish') {
             $_SESSION["editor_menu_button_clicked"] = true;
             PersistEditorContentsAfterSubmit();
@@ -143,7 +154,9 @@
         unset($_SESSION["open_document_name"]);
     }
     //unset($_SESSION["opened_from_button"]); -- this was moved into javascript section via xhr request
+
     unset($_SESSION["editor_menu_button_clicked"]);
+    
 
     // If 'open_document_name' is not set, set it to default value
     if(!isset($_SESSION["open_document_name"])) { 
@@ -152,7 +165,8 @@
    
     ?>
     <div class="container">
-    <h1>Editing "<?php echo $_SESSION["open_document_name"];?>"</h1>
+    <!-- display "Viewing (or Editing) <document_name> at the top -->
+    <h1><?php echo ($readOnly === 'true') ? 'Viewing' : 'Editing'; ?> "<?php echo $_SESSION["open_document_name"];?>"</h1>
     <div id="xhrErrorMessage" style="display: none" class="alert alert-danger" role="alert">
     </div>
     <?php if (!empty(trim($error_message))): ?>
@@ -163,14 +177,14 @@
     <form id="editor-form" action="index.php" method="post">
         <div id="editor"></div>
         <input type="hidden" id="editor-contents" name="editor_contents">
-        <!-- <div class="button-container">
+        <!-- <div class="button-container hideOnReadOnly">
             <button type="button" class="btn btn-success">Record Speech</button>
         </div> -->
-        <div class="button-container">
+        <div class="button-container hideOnReadOnly">
             <button type="submit" value="save" name="submit" class="btn btn-default">Save</button>
             <button data-toggle="modal" type='button' class="btn btn-default" data-target="#myModal">Save As</button>
         </div>
-        <div class="button-container">
+        <div class="button-container hideOnReadOnly">
             <label><input type="radio" name="visibility" value="public" required checked> Public</label>
             <label><input type="radio" name="visibility" value="friends"> Friends</label>
             <label><input type="radio" name="visibility" value="myself"> Myself</label>
@@ -200,10 +214,12 @@
 			</div>
         </div>
 	</div>
+    
 
     <script>
         var quill = new Quill('#editor', {
             theme: 'snow',
+            readOnly: <?php echo $readOnly; ?>,
             modules: {
                 toolbar: [
                     ['bold', 'italic', 'underline', 'strike'],
@@ -259,7 +275,8 @@
             xhr.send();
         }
 
-        function UnsetOpenedFromButtonSessionVariable() {
+        // Unsets a session variable associated with clicking an Open button for a document from another page
+        function UnsetOpenDocumentSessionVariable() {
             var xhr = new XMLHttpRequest();
             xhr.open('POST', 'unset_session_variable.php', true);
             xhr.onreadystatechange = function() {
@@ -274,18 +291,18 @@
             };
             xhr.send();
         }
-
+       
         // Load the document's contents if open_document_id and opened_from_button are set (i.e. if opening from another page)
         $(document).ready(function(){
             if(<?php echo isset($_SESSION["opened_from_button"]) && isset($_SESSION["open_document_id"]) ? 'true' : 'false'; ?>) {
                 LoadDocumentContents(<?php echo isset($_SESSION["open_document_id"]) ? $_SESSION["open_document_id"] : 'null'; ?>);
             }
-            UnsetOpenedFromButtonSessionVariable();
+           
+            UnsetOpenDocumentSessionVariable();
         });
         
     </script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>	
-    
     
 </body>
 

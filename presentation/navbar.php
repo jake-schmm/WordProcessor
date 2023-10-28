@@ -16,7 +16,7 @@
                 <li><a href="saved_documents.php">Saved Documents</a></li>
                 <li><a href="">Friends</a></li>
                 <li><a href="forum.php">Forum</a></li>
-                <li><a href="">Logout</a></li>
+                <li><a href="logout.php">Logout</a></li>
             </ul>
         </div>
     </div>

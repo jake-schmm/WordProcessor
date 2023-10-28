@@ -13,4 +13,9 @@ interface DocumentsManagerInterface {
     */
     public function addDocument(Document $doc): ManagerResponse;
     public function createForumPost(int $documentId, int $visibility): ManagerResponse;
+    public function getPublicPublishedDocuments(): ManagerResponse;
+
+    public function getPublicPublishedDocumentsByTitle(string $title): ManagerResponse;
+
+    public function getMyPublishedDocumentsByTitle(string $username, string $title): ManagerResponse;
 }

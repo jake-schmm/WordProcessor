@@ -33,6 +33,12 @@
     .openButton {
         margin-left: 10px;
     }
+    body {
+        /* https://uigradients.com/#Windy */
+        background: #acb6e5; /* fallback for old browsers */
+        background: -webkit-linear-gradient(to right, #acb6e5, #86fde8); /* Chrome 10-25, Safari 5.1-6 */
+        background: linear-gradient(to right, #acb6e5, #86fde8); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    }
    </style>
    <!-- navbar functionality -->
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
@@ -78,6 +84,33 @@
                     $docArray = $result->message;
                 }
                 else if($result->status === "error") {
+                    $error_message = $result->message;
+                }
+            }
+
+            if($_POST["submit"] == "open") {
+                // Return an array with open_document_id and open_document_name that you will set session variables to
+                // (or error if unable to open document)
+                $result = $docManager->openDocument($_POST["doc_id"]);
+                if($result->status === "success") {
+                    // If the document you're opening from the forum doesn't belong to you, open in readonly mode
+                    // (Compare the document's author to current user)
+                    $getDocumentResult = $docManager->getDocumentById($_POST["doc_id"]);
+                    if($getDocumentResult->status === "success") {
+                        if($getDocumentResult->message->getAuthor() !== $_SESSION["username"]) {
+                            $_SESSION["read_only_editor"] = "true";
+                        }
+                        $_SESSION["opened_from_button"] = "true";
+                        $_SESSION["open_document_id"] = $result->message["open_document_id"];
+                        $_SESSION["open_document_name"] = $result->message["open_document_name"];
+                        header("Location: index.php");
+                        exit();
+                    }
+                    else if($getDocumentResult->status === "error") {
+                        $error_message = $getDocumentResult->message;
+                    }
+                }
+                else { // openDocument not successful
                     $error_message = $result->message;
                 }
             }

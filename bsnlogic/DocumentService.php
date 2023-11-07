@@ -1,7 +1,7 @@
 <?php
 require_once('../interfaces/DocumentServiceInterface.php');
 require_once('../interfaces/DatabaseServiceInterface.php');
-
+require_once __DIR__ . '/../vendor/autoload.php'; // include mPDF library
 class DocumentService implements DocumentServiceInterface {
     private DatabaseServiceInterface $databaseService;
 
@@ -161,5 +161,17 @@ class DocumentService implements DocumentServiceInterface {
             $documents[] = $document;
         }
         return $documents;
+    }
+
+    // Utility function that requires the document's innerHTML as a parameter (gotten via client-side code)
+    public function convertToPDF(string $documentHtmlContent): void {
+        $mpdf = new \Mpdf\Mpdf();
+        $stylesheet = file_get_contents('../css/pdfcss.css'); 
+        $mpdf->WriteHTML($stylesheet, \Mpdf\HTMLParserMode::HEADER_CSS);
+        $mpdf->WriteHTML($documentHtmlContent, \Mpdf\HTMLParserMode::HTML_BODY);
+        $fileName = 'document.pdf';
+        ob_clean();
+        // Output to browser for download
+        $mpdf->Output($fileName, \Mpdf\Output\Destination::DOWNLOAD);
     }
 }

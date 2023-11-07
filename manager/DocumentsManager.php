@@ -188,7 +188,9 @@ class DocumentsManager implements DocumentsManagerInterface {
         }
     }
     
-
+    public function convertToPDF(string $documentHtmlContent): void {
+        $this->docService->convertToPDF($documentHtmlContent);
+    }
 
 
 }

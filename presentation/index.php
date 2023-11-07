@@ -28,6 +28,9 @@
             gap: 10px;
             padding-top: 1%;
         }
+        #editor {
+            white-space: pre-wrap;
+        }
         <?php
         session_start();
         $readOnly = isset($_SESSION['read_only_editor']);
@@ -145,6 +148,19 @@
                 }
             }
         }
+
+        if($_POST["submit"] == 'download') {
+            $_SESSION["editor_menu_button_clicked"] = true;
+            // Preserve spaces from Quill html in the pdf (replace tabs with 4 &nbsp chars and sequences of spaces with &nbsp chars)
+            // It's important to replace sequences of spaces (>=2 spaces) rather than just spaces because single spaces are inherent to HTML
+            // https://www.w3schools.com/php/func_regex_preg_replace_callback.asp 
+            $htmlContent = str_replace("\t", str_repeat('&nbsp;', 4), $_POST["editor_contents_html"]);
+            $htmlContent = preg_replace_callback('/\s{2,}/', function($matches) {
+                return str_repeat('&nbsp;', strlen($matches[0]));
+            }, $htmlContent);
+            
+            $docManager->convertToPDF($htmlContent);
+        }
         
     }
     // If 'opened_from_button' is not set and a menu button wasn't the last button clicked, reset document details.
@@ -177,13 +193,17 @@
     <form id="editor-form" action="index.php" method="post">
         <div id="editor"></div>
         <input type="hidden" id="editor-contents" name="editor_contents">
-        <!-- <div class="button-container hideOnReadOnly">
-            <button type="button" class="btn btn-success">Record Speech</button>
-        </div> -->
+        <input type="hidden" id="editor-contents-html" name="editor_contents_html">
+        <div class="button-container hideOnReadOnly">
+            <button id="toggleRecording" type="button" class="btn btn-success">Record Speech</button>
+        </div> 
         <div class="button-container hideOnReadOnly">
             <button type="submit" value="save" name="submit" class="btn btn-default">Save</button>
             <button data-toggle="modal" type='button' class="btn btn-default" data-target="#myModal">Save As</button>
         </div>
+        <div class="button-container">
+            <button type="submit" name="submit" value="download" class="btn btn-default">Download as PDF</button>
+        </div> 
         <div class="button-container hideOnReadOnly">
             <label><input type="radio" name="visibility" value="public" required checked> Public</label>
             <label><input type="radio" name="visibility" value="friends"> Friends</label>
@@ -240,8 +260,12 @@
                 var editorContents = JSON.stringify(quill.getContents());
                 document.getElementById('editor-contents').value = editorContents;
             }
+            else if(clickedButton.value === 'download') {
+                document.getElementById('editor-contents-html').value = quill.root.innerHTML;
+                
+            }
         });
-
+       
         document.getElementById('saveAs-form').addEventListener('submit', function(event) {
             var clickedButton = event.submitter;
             if(clickedButton.value === 'saveAs') {
@@ -259,6 +283,7 @@
                         if(responseObj.status === 'success') {
                             var deltaObject= JSON.parse(responseObj.message);
                             quill.setContents(deltaObject);
+                            console.log(quill.root.innerHTML);
                         }
                         else {
                             $("#xhrErrorMessage").show();
@@ -301,6 +326,76 @@
             UnsetOpenDocumentSessionVariable();
         });
         
+
+       
+        // Speech-to-text functionality code beginning
+        var isRecording = false;
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.continuous = true; // don't stop recording after one utterance
+        recognition.interimResults = false; // only display final results of recording
+        const toggleRecordingButton = document.getElementById('toggleRecording');
+
+        // Insert text into editor when the recognition has a result
+        recognition.onresult = (event) => {
+            const transcript = event.results[event.resultIndex][0].transcript;
+            insertTextInEditor(transcript);
+        };
+
+        setupRecordingButton();
+
+        // This function adds a click handler to the recording button to change recording state when clicked
+        function setupRecordingButton() {
+            toggleRecordingButton.addEventListener('click', () => {
+                if (isRecording) {
+                    recognition.stop();
+                } else {
+                    recognition.start();
+                }
+            });
+        }
+
+        // When recognition is started, change isRecording and the appearance of recording button
+        recognition.onstart = function() {
+            isRecording = true;
+            updateRecordingButton(); 
+        };
+
+        // When recognition is stopped, change isRecording and the appearance of recording button
+        recognition.onend = function() {
+            isRecording = false;
+            updateRecordingButton(); 
+        };
+
+        function updateRecordingButton() {
+            if (isRecording) {
+                toggleRecordingButton.textContent = 'Stop Recording';
+                toggleRecordingButton.classList.remove('btn-success');
+                toggleRecordingButton.classList.add('btn-danger');
+            } else {
+                toggleRecordingButton.textContent = 'Record Speech';
+                toggleRecordingButton.classList.remove('btn-danger');
+                toggleRecordingButton.classList.add('btn-success');
+            }
+        }
+
+        // Insert text at cursor position (or at end if no cursor position). 
+        // Note that this will unselect currently active formatting options 
+        //   (except for list and align options, which affect the whole line) before inserting the text
+        function insertTextInEditor(text) {
+            let range = quill.getSelection(); // get cursor position in editor (null if none)
+            let insertIndex = range ? range.index : quill.getLength() - 1;
+            quill.focus();
+
+            setTimeout(() => {
+                quill.clipboard.dangerouslyPasteHTML(insertIndex, text);
+                quill.setSelection(insertIndex + text.length); // update cursor position
+            }, 0);
+        }
+        // Stop recording when user navigates away from window
+        window.addEventListener('blur', function() {
+            recognition.stop();
+        });
+        // end of Speech-to-Text code
     </script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>	
     

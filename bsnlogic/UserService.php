@@ -27,7 +27,7 @@ class UserService implements UserServiceInterface {
     }
 
     public function userExistsByUsername(string $username): bool {
-        $sql = "SELECT * FROM users WHERE username=?";
+        $sql = "SELECT * FROM users WHERE BINARY username=?";
         $result = $this->databaseService->executeQuery($sql, [$username], "s", "select");
         if($result && $result->num_rows > 0) {
             return true;

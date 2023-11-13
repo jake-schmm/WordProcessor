@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 28, 2023 at 04:51 AM
+-- Generation Time: Nov 14, 2023 at 12:54 AM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 8.2.0
 
@@ -68,7 +68,14 @@ INSERT INTO `document` (`id`, `title`, `delta`, `author`, `last_saved`) VALUES
 (50, 'New Document', '{\"ops\":[{\"insert\":\"Example\\n\"}]}', 'Example', '2023-10-27 17:49:41'),
 (51, 'New Document', '{\"ops\":[{\"insert\":\"s\\n\"}]}', 'Example', '2023-10-27 21:25:40'),
 (52, 'New Document', '{\"ops\":[{\"insert\":\"Hello\\n\"}]}', 'Example', '2023-10-27 19:29:34'),
-(54, 'This is a new document', '{\"ops\":[{\"insert\":\"Examples1\\n\"}]}', 'Tree', '2023-10-27 22:46:43');
+(54, 'This is a new document', '{\"ops\":[{\"insert\":\"Examples1\\n\"},{\"attributes\":{\"size\":\"huge\"},\"insert\":\"Example\"},{\"insert\":\"\\n\"},{\"attributes\":{\"size\":\"huge\",\"color\":\"#e60000\"},\"insert\":\"Test\"},{\"attributes\":{\"list\":\"bullet\"},\"insert\":\"\\n\"},{\"attributes\":{\"underline\":true,\"italic\":true,\"size\":\"huge\",\"color\":\"#e60000\",\"bold\":true},\"insert\":\"hello\"},{\"attributes\":{\"list\":\"bullet\"},\"insert\":\"\\n\"},{\"attributes\":{\"size\":\"small\"},\"insert\":\"Test\"},{\"insert\":\"\\nTest\\n\"},{\"attributes\":{\"size\":\"large\"},\"insert\":\"Test\"},{\"insert\":\"\\n\"},{\"attributes\":{\"size\":\"huge\",\"color\":\"#ffc266\"},\"insert\":\"Test\"},{\"insert\":\"Testing. Testing.\\nExample\"},{\"attributes\":{\"list\":\"ordered\"},\"insert\":\"\\n\"},{\"insert\":\"Example2\"},{\"attributes\":{\"list\":\"ordered\"},\"insert\":\"\\n\"},{\"attributes\":{\"strike\":true},\"insert\":\"Example\"},{\"insert\":\"\\n\"},{\"attributes\":{\"underline\":true,\"strike\":true,\"italic\":true,\"bold\":true},\"insert\":\"Example\"},{\"insert\":\"\\n\"},{\"attributes\":{\"underline\":true,\"strike\":true,\"italic\":true,\"font\":\"serif\",\"bold\":true},\"insert\":\"Hello\"},{\"insert\":\"\\n\"},{\"attributes\":{\"underline\":true,\"strike\":true,\"italic\":true,\"font\":\"monospace\",\"bold\":true},\"insert\":\"Hello\"},{\"insert\":\"\\n\"},{\"attributes\":{\"underline\":true,\"strike\":true,\"italic\":true,\"font\":\"monospace\",\"bold\":true},\"insert\":\"Hello\"},{\"insert\":\"\\n\"},{\"attributes\":{\"underline\":true,\"strike\":true,\"italic\":true,\"font\":\"monospace\",\"bold\":true},\"insert\":\"Hello\"},{\"attributes\":{\"align\":\"center\"},\"insert\":\"\\n\"},{\"attributes\":{\"underline\":true,\"strike\":true,\"italic\":true,\"font\":\"monospace\",\"bold\":true},\"insert\":\"Hello\"},{\"attributes\":{\"align\":\"right\"},\"insert\":\"\\n\"},{\"attributes\":{\"underline\":true,\"strike\":true,\"italic\":true,\"font\":\"monospace\",\"bold\":true},\"insert\":\"Hello\"},{\"attributes\":{\"align\":\"justify\"},\"insert\":\"\\n\"},{\"insert\":\"\\n\"}]}', 'Tree', '2023-11-12 23:50:57'),
+(56, 'New Story 2', '{\"ops\":[{\"attributes\":{\"size\":\"huge\"},\"insert\":\"Heading\"},{\"insert\":\"\\n\"},{\"attributes\":{\"underline\":true,\"italic\":true,\"bold\":true,\"size\":\"huge\",\"color\":\"#e60000\",\"font\":\"monospace\",\"link\":\"www.youtube.com\"},\"insert\":\"Once upon a time...\"},{\"attributes\":{\"list\":\"bullet\"},\"insert\":\"\\n\"},{\"attributes\":{\"underline\":true,\"italic\":true,\"size\":\"huge\",\"color\":\"#e60000\",\"font\":\"monospace\",\"bold\":true},\"insert\":\"There was a time\"},{\"attributes\":{\"list\":\"bullet\"},\"insert\":\"\\n\"}]}', 'Example2', '2023-10-28 17:19:30'),
+(57, 'New Document', '{\"ops\":[{\"insert\":\"Testing. Testing.Testing.\\n\"}]}', 'Tree', '2023-11-06 14:33:53'),
+(58, 'New Document', '{\"ops\":[{\"insert\":\"\\n\"}]}', 'Tree', '2023-11-06 18:13:51'),
+(59, 'New Document', '{\"ops\":[{\"attributes\":{\"size\":\"huge\",\"font\":\"serif\"},\"insert\":\"Example                      Example\"},{\"insert\":\"\\n\\t\\t                 \"},{\"attributes\":{\"size\":\"huge\"},\"insert\":\"Example\"},{\"insert\":\"\\n\"}]}', 'Tree', '2023-11-06 19:10:14'),
+(60, 'New Document', '{\"ops\":[{\"insert\":\"Example \\t\\t\\t\\tExample\\n\"},{\"attributes\":{\"underline\":true,\"italic\":true,\"bold\":true,\"size\":\"huge\",\"link\":\"http://www.youtube.com\"},\"insert\":\"EXAMPLE\"},{\"attributes\":{\"align\":\"center\",\"indent\":8,\"list\":\"bullet\"},\"insert\":\"\\n\"},{\"insert\":\"\\n\"}]}', 'Tree', '2023-11-06 20:40:05'),
+(61, 'New Document5', '{\"ops\":[{\"insert\":\"Example \\t\\t\\t\\tExample\\n\"},{\"attributes\":{\"underline\":true,\"italic\":true,\"bold\":true,\"size\":\"huge\",\"link\":\"http://www.youtube.com\"},\"insert\":\"EXAMPLE\"},{\"attributes\":{\"align\":\"center\",\"indent\":8,\"list\":\"bullet\"},\"insert\":\"\\n\"},{\"insert\":\"\\n\"}]}', 'Tree', '2023-11-06 20:41:31'),
+(62, 'Test', '{\"ops\":[{\"insert\":\"Examples1\\n\"},{\"attributes\":{\"size\":\"huge\"},\"insert\":\"Example\"},{\"insert\":\"\\n\"},{\"attributes\":{\"size\":\"huge\",\"color\":\"#e60000\"},\"insert\":\"Test\"},{\"attributes\":{\"list\":\"bullet\"},\"insert\":\"\\n\"},{\"attributes\":{\"underline\":true,\"italic\":true,\"size\":\"huge\",\"color\":\"#e60000\",\"bold\":true},\"insert\":\"hello\"},{\"attributes\":{\"list\":\"bullet\"},\"insert\":\"\\n\"},{\"attributes\":{\"size\":\"small\"},\"insert\":\"Test\"},{\"insert\":\"\\nTest\\n\"},{\"attributes\":{\"size\":\"large\"},\"insert\":\"Test\"},{\"insert\":\"\\n\"},{\"attributes\":{\"size\":\"huge\",\"color\":\"#ffc266\"},\"insert\":\"Test\"},{\"insert\":\"Testing. Testing.\\nExample\"},{\"attributes\":{\"list\":\"ordered\"},\"insert\":\"\\n\"},{\"insert\":\"Example2\"},{\"attributes\":{\"list\":\"ordered\"},\"insert\":\"\\n\"},{\"attributes\":{\"strike\":true},\"insert\":\"Example\"},{\"insert\":\"\\n\"},{\"attributes\":{\"underline\":true,\"strike\":true,\"italic\":true,\"bold\":true},\"insert\":\"Example\"},{\"insert\":\"\\n\"},{\"attributes\":{\"underline\":true,\"strike\":true,\"italic\":true,\"font\":\"serif\",\"bold\":true},\"insert\":\"Hello\"},{\"insert\":\"\\n\"},{\"attributes\":{\"underline\":true,\"strike\":true,\"italic\":true,\"font\":\"monospace\",\"bold\":true},\"insert\":\"Hello\"},{\"insert\":\"\\n\"},{\"attributes\":{\"underline\":true,\"strike\":true,\"italic\":true,\"font\":\"monospace\",\"bold\":true},\"insert\":\"Hello\"},{\"insert\":\"\\n\"},{\"attributes\":{\"underline\":true,\"strike\":true,\"italic\":true,\"font\":\"monospace\",\"bold\":true},\"insert\":\"Hello\"},{\"attributes\":{\"align\":\"center\"},\"insert\":\"\\n\"},{\"attributes\":{\"underline\":true,\"strike\":true,\"italic\":true,\"font\":\"monospace\",\"bold\":true},\"insert\":\"Hello\"},{\"attributes\":{\"align\":\"right\"},\"insert\":\"\\n\"},{\"attributes\":{\"underline\":true,\"strike\":true,\"italic\":true,\"font\":\"monospace\",\"bold\":true},\"insert\":\"Hello\"},{\"attributes\":{\"align\":\"justify\"},\"insert\":\"\\n\"},{\"insert\":\"\\n\"}]}', 'Tree', '2023-11-12 23:51:04');
 
 -- --------------------------------------------------------
 
@@ -99,7 +106,55 @@ INSERT INTO `document_visibility` (`document_id`, `visibility_level_id`) VALUES
 (52, 1),
 (52, 3),
 (54, 1),
-(54, 3);
+(54, 3),
+(56, 1),
+(56, 3),
+(61, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `friends_list`
+--
+
+CREATE TABLE `friends_list` (
+  `user_username` varchar(50) NOT NULL,
+  `friend_username` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `friends_list`
+--
+
+INSERT INTO `friends_list` (`user_username`, `friend_username`) VALUES
+('Example', 'Example2'),
+('Example', 'Tree'),
+('Example2', 'Example'),
+('Example2', 'Tree'),
+('Tree', 'Example'),
+('Tree', 'Example2');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `friend_requests`
+--
+
+CREATE TABLE `friend_requests` (
+  `request_id` int(11) NOT NULL,
+  `sender_username` varchar(50) NOT NULL,
+  `receiver_username` varchar(50) NOT NULL,
+  `status` enum('pending','accepted') NOT NULL DEFAULT 'pending'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `friend_requests`
+--
+
+INSERT INTO `friend_requests` (`request_id`, `sender_username`, `receiver_username`, `status`) VALUES
+(2, 'Tree', 'Example', 'accepted'),
+(4, 'Example', 'Example2', 'accepted'),
+(7, 'Tree', 'Example2', 'accepted');
 
 -- --------------------------------------------------------
 
@@ -120,7 +175,8 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`user_id`, `username`, `password`) VALUES
 (1, 'Tree', 'Admin'),
 (7, 'Try', 'e'),
-(9, 'Example', '5');
+(9, 'Example', '5'),
+(10, 'Example2', '5');
 
 -- --------------------------------------------------------
 
@@ -161,6 +217,21 @@ ALTER TABLE `document_visibility`
   ADD KEY `visibility_level_id` (`visibility_level_id`);
 
 --
+-- Indexes for table `friends_list`
+--
+ALTER TABLE `friends_list`
+  ADD PRIMARY KEY (`user_username`,`friend_username`),
+  ADD KEY `friend_username` (`friend_username`);
+
+--
+-- Indexes for table `friend_requests`
+--
+ALTER TABLE `friend_requests`
+  ADD PRIMARY KEY (`request_id`),
+  ADD UNIQUE KEY `sender_username` (`sender_username`,`receiver_username`),
+  ADD KEY `receiver_username` (`receiver_username`);
+
+--
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
@@ -182,13 +253,19 @@ ALTER TABLE `visibility_levels`
 -- AUTO_INCREMENT for table `document`
 --
 ALTER TABLE `document`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
+
+--
+-- AUTO_INCREMENT for table `friend_requests`
+--
+ALTER TABLE `friend_requests`
+  MODIFY `request_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `visibility_levels`
@@ -212,6 +289,20 @@ ALTER TABLE `document`
 ALTER TABLE `document_visibility`
   ADD CONSTRAINT `document_visibility_ibfk_1` FOREIGN KEY (`document_id`) REFERENCES `document` (`id`),
   ADD CONSTRAINT `document_visibility_ibfk_2` FOREIGN KEY (`visibility_level_id`) REFERENCES `visibility_levels` (`id`);
+
+--
+-- Constraints for table `friends_list`
+--
+ALTER TABLE `friends_list`
+  ADD CONSTRAINT `friends_list_ibfk_1` FOREIGN KEY (`user_username`) REFERENCES `users` (`username`),
+  ADD CONSTRAINT `friends_list_ibfk_2` FOREIGN KEY (`friend_username`) REFERENCES `users` (`username`);
+
+--
+-- Constraints for table `friend_requests`
+--
+ALTER TABLE `friend_requests`
+  ADD CONSTRAINT `friend_requests_ibfk_1` FOREIGN KEY (`sender_username`) REFERENCES `users` (`username`),
+  ADD CONSTRAINT `friend_requests_ibfk_2` FOREIGN KEY (`receiver_username`) REFERENCES `users` (`username`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

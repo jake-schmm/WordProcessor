@@ -90,13 +90,13 @@ class DocumentService implements DocumentServiceInterface {
     }
 
     public function getMyDocuments(string $username): array {
-        $sql = "SELECT * FROM document WHERE author = ? ORDER BY last_saved DESC";
+        $sql = "SELECT * FROM document WHERE BINARY author = ? ORDER BY last_saved DESC";
         $result = $this->databaseService->executeQuery($sql, [$username], "s", "select");
         return $this->getDocumentsFromSelectResult($result);
     }
 
     public function getMyDocumentsByTitle(string $username, string $title): array {
-        $sql = "SELECT * FROM document WHERE author = ? AND BINARY title LIKE ? ORDER BY last_saved DESC";
+        $sql = "SELECT * FROM document WHERE BINARY author = ? AND BINARY title LIKE ? ORDER BY last_saved DESC";
         $searchQuery = "%" . $title . "%";
         $result = $this->databaseService->executeQuery($sql, [$username, $searchQuery], "ss", "select");
         return $this->getDocumentsFromSelectResult($result);
@@ -135,7 +135,7 @@ class DocumentService implements DocumentServiceInterface {
         SELECT doc.*
         FROM document AS doc
         JOIN document_visibility AS dv ON doc.id = dv.document_id
-        WHERE doc.author = ? 
+        WHERE BINARY doc.author = ? 
         AND BINARY doc.title LIKE ?
         AND dv.visibility_level_id = 3  -- Filter for 'myself' visibility
         ORDER BY doc.last_saved DESC

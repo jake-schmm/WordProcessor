@@ -5,6 +5,14 @@ interface UserManagerInterface {
 
     public function authenticateUser(string $username, string $password) : ManagerResponse;
 
-    
+    public function getFriendsList(string $username): ManagerResponse;
+
+    public function sendFriendRequest(string $senderUsername, string $receiverUsername): ManagerResponse;
+
+    public function acceptFriendRequest(string $senderUsername, string $receiverUsername): ManagerResponse;
+
+    public function rejectFriendRequest(string $senderUsername, string $receiverUsername): ManagerResponse;
+
+    public function getIncomingPendingFriendRequests(string $username): ManagerResponse;
 
 }

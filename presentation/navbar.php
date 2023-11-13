@@ -14,7 +14,7 @@
             <ul class="nav navbar-nav">
                 <li><a href="index.php">Editor</a></li>
                 <li><a href="saved_documents.php">Saved Documents</a></li>
-                <li><a href="">Friends</a></li>
+                <li><a href="friends_page.php">Friends</a></li>
                 <li><a href="forum.php">Forum</a></li>
                 <li><a href="logout.php">Logout</a></li>
             </ul>

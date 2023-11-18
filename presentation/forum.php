@@ -66,6 +66,11 @@
                         break;
                     case 'friends':
                         // get friends published documents
+                        try {
+                            $result = $docManager->getFriendsPublishedDocumentsByTitle($_SESSION["username"], $_POST["documentNameFilterInput"]);
+                        } catch(UserNonExistentException $e) {
+                            $error_message = $e->getMessage();
+                        }
                         break;
                     case 'myself':
                         // get my published documents

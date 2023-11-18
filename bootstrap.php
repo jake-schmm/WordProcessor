@@ -12,4 +12,4 @@ $friendshipService = new FriendshipService($dbService);
 $userManager = new UserManager($userService, $friendshipService);
 $docService = new DocumentService($dbService); 
 $forumService = new ForumService($dbService);    
-$docManager = new DocumentsManager($docService, $userService, $forumService);
+$docManager = new DocumentsManager($docService, $userService, $friendshipService, $forumService);

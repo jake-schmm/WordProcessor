@@ -134,6 +134,7 @@
                         break;
                     case 'friends':
                         // publish to friends
+                        $result = $docManager->createForumPost($_SESSION["open_document_id"], Visibility::FRIENDS->value);
                         break;
                     case 'myself':
                         // publish to myself

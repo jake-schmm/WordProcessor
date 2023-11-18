@@ -97,7 +97,9 @@ class DocumentService implements DocumentServiceInterface {
 
     public function getMyDocumentsByTitle(string $username, string $title): array {
         $sql = "SELECT * FROM document WHERE BINARY author = ? AND BINARY title LIKE ? ORDER BY last_saved DESC";
-        $searchQuery = "%" . $title . "%";
+        // Match any documents that have a title with specified title preceded by wildcard or followed by wildcard 
+        // Wildcard is zero or more of any characters, so a search query of "Report" would find "Financial Reporting"
+        $searchQuery = "%" . $title . "%"; 
         $result = $this->databaseService->executeQuery($sql, [$username, $searchQuery], "ss", "select");
         return $this->getDocumentsFromSelectResult($result);
     }
@@ -127,6 +129,35 @@ class DocumentService implements DocumentServiceInterface {
         $result = $this->databaseService->executeQuery($sql, [$searchQuery], "s", "select");
         return $this->getDocumentsFromSelectResult($result);
     }
+
+    // Get all friends-visibility documents that were authored by people in friendsList
+    // This method should be called after calling FriendshipService's getFriendsList method in the DocumentManager class
+    public function getFriendsPublishedDocumentsByTitle(array $friendsList, string $title): array {
+        // Create ? placeholders for each element in the friendsList array
+        $placeholders = implode(',', array_fill(0, count($friendsList), '?'));
+
+        $sql = "
+            SELECT doc.*
+            FROM document AS doc
+            JOIN document_visibility AS dv ON doc.id = dv.document_id
+            WHERE BINARY doc.title LIKE ?
+            AND dv.visibility_level_id = 2  -- Filter for 'friends' visibility
+            AND doc.author IN (
+                SELECT username
+                FROM users
+                WHERE username IN ($placeholders)
+            )
+            ORDER BY doc.last_saved DESC
+        ";
+
+        $searchQuery = "%" . $title . "%"; 
+        $params = array_merge([$searchQuery], $friendsList);
+        $types = str_repeat('s', count($params)); // will equate to one 's' for searchQuery, then one 's' for each friendsList element
+
+        $result = $this->databaseService->executeQuery($sql, $params, $types, "select");
+        return $this->getDocumentsFromSelectResult($result);
+    }
+    
 
     public function getMyPublishedDocumentsByTitle(string $username, string $title): array {
         // Get all documents that were published (have an associated document_visibility record) with myself visibility

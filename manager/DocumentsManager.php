@@ -2,6 +2,7 @@
 require_once('../interfaces/DocumentsManagerInterface.php');
 require_once('../interfaces/DocumentServiceInterface.php');
 require_once('../interfaces/UserServiceInterface.php');
+require_once('../interfaces/FriendshipServiceInterface.php');
 require_once('../interfaces/ForumServiceInterface.php');
 require_once('../models/Document.php');
 require_once('../models/ManagerResponse.php');
@@ -10,9 +11,11 @@ class DocumentsManager implements DocumentsManagerInterface {
     private DocumentServiceInterface $docService;
     private UserServiceInterface $userService;
     private ForumServiceInterface $forumService;
-    public function __construct(DocumentServiceInterface $docService, UserServiceInterface $userService, ForumServiceInterface $forumService) {
+    private FriendshipServiceInterface $friendshipService;
+    public function __construct(DocumentServiceInterface $docService, UserServiceInterface $userService, FriendshipServiceInterface $friendshipService, ForumServiceInterface $forumService) {
         $this->docService = $docService;
         $this->userService = $userService;
+        $this->friendshipService = $friendshipService;
         $this->forumService = $forumService;
     }
 
@@ -173,6 +176,24 @@ class DocumentsManager implements DocumentsManagerInterface {
             return new ManagerResponse("success", $result); // return array of documents (could be empty)
         } catch(RuntimeException $e) {
             return new ManagerResponse("error", "A database error occurred: " . $e->getMessage());
+        }
+    }
+
+    public function getFriendsPublishedDocumentsByTitle(string $username, string $title): ManagerResponse {
+        if(!$this->userService->userExistsByUsername($username)) {
+            throw new UserNonExistentException("User whose friends list you're trying to fetch doesn't exist.");
+        }
+        try {
+            $friendsList = $this->friendshipService->getFriendsList($username);
+            foreach($friendsList as $friend) {
+                if(!$this->userService->userExistsByUsername($friend)) {
+                    throw new UserNonExistentException("At least one friend has a username that doesn't belong to a user");
+                }
+            }
+            $result = $this->docService->getFriendsPublishedDocumentsByTitle($friendsList, $title);
+            return new ManagerResponse("success", $result);
+        } catch(RuntimeException $e) {
+            return new ManagerResponse("error", "A database error occured: " . $e->getMessage());
         }
     }
 

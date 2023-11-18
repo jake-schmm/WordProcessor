@@ -16,6 +16,7 @@ interface DocumentsManagerInterface {
     public function getPublicPublishedDocuments(): ManagerResponse;
 
     public function getPublicPublishedDocumentsByTitle(string $title): ManagerResponse;
+    public function getFriendsPublishedDocumentsByTitle(string $username, string $title): ManagerResponse;
 
     public function getMyPublishedDocumentsByTitle(string $username, string $title): ManagerResponse;
 }

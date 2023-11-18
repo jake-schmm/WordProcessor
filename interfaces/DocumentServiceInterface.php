@@ -27,7 +27,7 @@ interface DocumentServiceInterface {
 
     public function getMyPublishedDocumentsByTitle(string $username, string $title): array;
 
-    // public function getFriendsPublishedDocumentsByTitle(string $username, array $friendsList, string $title);
+    public function getFriendsPublishedDocumentsByTitle(array $friendsList, string $title): array;
 
     public function convertToPDF(string $documentHtmlContent): void;
 }

@@ -54,9 +54,34 @@
             }
         }
 
-        // Both of these methods can throw UserNonExistentException and can have error (but return the result upon success)
-        $friend_requests = $userManager->getIncomingPendingFriendRequests($_SESSION['username'])->message;
-        $friends_list = $userManager->getFriendsList($_SESSION['username'])->message;
+        // Attempt to get all incoming friend requests for this user
+        try {
+            $friendRequestsResult = $userManager->getIncomingPendingFriendRequests($_SESSION['username']);
+            if($friendRequestsResult->status === "error") {
+                // Display database error if there is one
+                $requests_error_message = $friendRequestsResult->message;
+            }
+            else if($friendRequestsResult->status === "success") {
+                $friend_requests = $friendRequestsResult->message;
+            }
+        } catch(UserNonExistentException $e) {
+            $requests_error_message = $e->getMessage();
+        }
+        
+        // Attempt to get friends list for this user
+        try {
+            $friendsListResult = $userManager->getFriendsList($_SESSION['username']);
+            if($friendsListResult->status === "error") {
+                // Display database error if there is one
+                $list_error_message = $friendsListResult->message;
+            }
+            else if($friendsListResult->status === "success") {
+                $friends_list = $friendsListResult->message;
+            }
+        } catch(UserNonExistentException $e) {
+            $list_error_message = $e->getMessage();
+        }
+        
     ?>
     <div class="container">
         <div class="friend-requests">

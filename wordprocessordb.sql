@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 18, 2023 at 08:03 PM
+-- Generation Time: Nov 18, 2023 at 08:32 PM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 8.2.0
 
@@ -98,7 +98,6 @@ INSERT INTO `document_visibility` (`document_id`, `visibility_level_id`) VALUES
 (45, 1),
 (46, 1),
 (47, 1),
-(47, 2),
 (49, 1),
 (50, 1),
 (50, 3),
@@ -107,13 +106,10 @@ INSERT INTO `document_visibility` (`document_id`, `visibility_level_id`) VALUES
 (52, 1),
 (52, 3),
 (54, 1),
-(54, 2),
 (54, 3),
 (56, 1),
-(56, 2),
 (56, 3),
-(61, 1),
-(62, 2);
+(61, 1);
 
 -- --------------------------------------------------------
 
@@ -132,10 +128,8 @@ CREATE TABLE `friends_list` (
 
 INSERT INTO `friends_list` (`user_username`, `friend_username`) VALUES
 ('Example', 'Example2'),
-('Example', 'Tree'),
 ('Example2', 'Example'),
 ('Example2', 'Tree'),
-('Tree', 'Example'),
 ('Tree', 'Example2');
 
 -- --------------------------------------------------------
@@ -156,7 +150,6 @@ CREATE TABLE `friend_requests` (
 --
 
 INSERT INTO `friend_requests` (`request_id`, `sender_username`, `receiver_username`, `status`) VALUES
-(8, 'Tree', 'Example', 'accepted'),
 (9, 'Tree', 'Example2', 'accepted'),
 (10, 'Example', 'Example2', 'accepted');
 

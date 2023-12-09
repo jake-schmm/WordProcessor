@@ -41,6 +41,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         text-align: center;
         margin-bottom: 30px;
       }
+      body {
+            background-image: url('../images/background5.png');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
     </style>
   </head>
   <body>

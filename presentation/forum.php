@@ -15,7 +15,7 @@
         padding: 20px;
         margin: 20px 0;
         text-align: center;
-        background: #c9c9c9;
+        background: #d2b48c;
         font-size: 20px;
     }
     .button-container {
@@ -31,14 +31,24 @@
         gap: 10px;
     }
     .openButton {
+        background:#664228;
         margin-left: 10px;
+    }
+    .btn-primary {
+        background:#664228;
     }
     body {
         /* https://uigradients.com/#Windy */
         background: #acb6e5; /* fallback for old browsers */
         background: -webkit-linear-gradient(to right, #acb6e5, #86fde8); /* Chrome 10-25, Safari 5.1-6 */
         background: linear-gradient(to right, #acb6e5, #86fde8); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+        background-image: url('../images/background6.png');
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: 100% 1100px;
+        min-height: 1100px;
     }
+
    </style>
    <!-- navbar functionality -->
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>

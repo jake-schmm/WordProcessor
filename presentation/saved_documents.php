@@ -15,7 +15,7 @@
         padding: 20px;
         margin: 20px 0;
         text-align: center;
-        background: #c9c9c9;
+        background: rgba(201, 201, 201, 0.8);
         font-size: 20px;
     }
     .button-container {
@@ -29,6 +29,12 @@
     .filter-form-elements {
         display: flex;
         gap: 10px;
+    }
+    body {
+        background-image: url('../images/background5.png');
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
     }
    </style>
    <!-- navbar functionality -->

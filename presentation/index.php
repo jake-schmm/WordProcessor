@@ -30,6 +30,30 @@
         }
         #editor {
             white-space: pre-wrap;
+            background: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        #toggleRecording {
+            transition-duration: 0.4s;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .bg {
+            background-image: url('../images/background5.png');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+        .ql-toolbar {
+            background-color: #61B0B7; 
+        }
+        button[class^="ql-"] {
+           background-color: white !important;
+        }
+       .ql-toolbar span[class^="ql-"]:not(.ql-picker-item) {
+            background-color: white !important;
         }
         <?php
         session_start();
@@ -43,7 +67,7 @@
     <!-- navbar functionality -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
 </head>
-<body>
+<body class="bg">
     <?php 
     function PersistEditorContentsAfterSubmit() {
         echo '<script>;
